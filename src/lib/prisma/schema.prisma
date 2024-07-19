@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  image         String?
+  emailVerified DateTime? @map("email_verified")
+
+  accounts Account[]
+  sessions Session[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Account {
+  type              String
+  scope             String?
+  provider          String
+  id_token          String?
+  expires_at        Int?
+  token_type        String?
+  access_token      String?
+  session_state     String?
+  refresh_token     String?
+  providerAccountId String  @map("provider_account_id")
+
+  userId String @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([provider, providerAccountId])
+  @@map("account")
+}
+
+model Session {
+  expires      DateTime
+  sessionToken String   @unique @map("session_token")
+
+  userId String @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("session")
+}
+
+model VerificationToken {
+  token      String
+  expires    DateTime
+  identifier String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([identifier, token])
+  @@map("verification_token")
+}
