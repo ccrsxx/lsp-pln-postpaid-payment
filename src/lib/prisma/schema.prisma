@@ -8,12 +8,22 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
+  role          Role      @default(USER)
   email         String    @unique
   image         String?
+  password      String?
+  kwhNumber     String    @unique @map("kwh_number")
   emailVerified DateTime? @map("email_verified")
 
+  rateVariantId String @map("rate_variant_id")
+
+  RateVariant RateVariant @relation(fields: [rateVariantId], references: [id])
+
+  Bill     Bill[]
+  Usage    Usage[]
+  Payment  Payment[]
   accounts Account[]
   sessions Session[]
 
@@ -70,4 +80,83 @@ model VerificationToken {
 
   @@id([identifier, token])
   @@map("verification_token")
+}
+
+model RateVariant {
+  id      String @id @default(uuid())
+  name    String @unique
+  feeRate Int    @map("fee_rate")
+
+  user User[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("rate_variant")
+}
+
+model Usage {
+  id         String  @id @default(uuid())
+  active     Boolean
+  finalKwh   Int     @map("final_kwh")
+  initialKwh Int     @map("initial_kwh")
+
+  userId String? @map("user_id")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  bill Bill[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("usage")
+}
+
+model Bill {
+  id       String @id @default(uuid())
+  totalKwh Int    @map("total_kwh")
+
+  userId  String @map("user_id")
+  usageId String @map("usage_id")
+
+  user  User  @relation(fields: [userId], references: [id])
+  usage Usage @relation(fields: [usageId], references: [id])
+
+  payment Payment[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("bill")
+}
+
+model Payment {
+  id       String @id @default(uuid())
+  total    Int
+  adminFee Int    @map("admin_fee")
+
+  userId String @map("user_id")
+  billId String @map("bill_id")
+
+  user User @relation(fields: [userId], references: [id])
+  bill Bill @relation(fields: [billId], references: [id])
+
+  status PaymentStatus
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz()
+
+  @@map("payment")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  CANCELED
 }

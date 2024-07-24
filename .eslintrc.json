@@ -29,7 +29,6 @@
   ],
   "rules": {
     "semi": ["error", "always"],
-    "curly": ["warn", "multi"],
     "quotes": ["error", "single", { "avoidEscape": true }],
     "jsx-quotes": ["error", "prefer-single"],
     "linebreak-style": ["error", "unix"],
@@ -46,6 +45,11 @@
             "group": "builtin",
             "position": "before",
             "patternOptions": { "matchBase": true }
+          },
+          {
+            "pattern": "@/auth",
+            "group": "external",
+            "position": "after"
           },
           {
             "pattern": "@/lib/**",
@@ -77,9 +81,12 @@
         ]
       }
     ],
+    "import/no-duplicates": ["warn", { "prefer-inline": true }],
     "@next/next/no-img-element": "off",
+    "@typescript-eslint/consistent-type-exports": "warn",
     "@typescript-eslint/consistent-type-imports": "warn",
     "@typescript-eslint/prefer-nullish-coalescing": "warn",
+    "@typescript-eslint/no-import-type-side-effects": "error",
     "@typescript-eslint/explicit-function-return-type": "warn",
     "@typescript-eslint/no-unused-vars": [
       "warn",

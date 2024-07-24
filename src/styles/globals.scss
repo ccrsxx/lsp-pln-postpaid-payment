@@ -3,80 +3,79 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
   body {
-    @apply mx-auto grid min-h-screen max-w-6xl grid-rows-[auto,1fr,auto] bg-black px-4 text-white;
-  }
-
-  main {
-    @apply layout md:pt-12;
-  }
-
-  ::selection {
-    @apply bg-accent-main text-white;
+    @apply dark mx-auto grid min-h-screen grid-rows-[auto,1fr,auto] bg-background
+           font-sans text-foreground antialiased;
   }
 }
 
 @layer components {
   .layout {
-    @apply mx-auto w-11/12 max-w-6xl;
+    @apply mx-auto max-w-6xl px-4;
   }
 
   .card-layout {
     @apply grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4;
-  }
-
-  .custom-button {
-    @apply px-4 py-2 font-bold;
-  }
-
-  .main-border {
-    @apply border border-gray-300 dark:border-gray-600;
-  }
-
-  .custom-input {
-    @apply main-border focus:border-accent-main rounded-md bg-white px-3 py-2 outline-none transition dark:bg-black;
-  }
-
-  .smooth-tab {
-    @apply focus-visible:ring-accent-main rounded-md transition-shadow focus-visible:outline-none focus-visible:ring-2;
-  }
-
-  .clickable {
-    @apply smooth-tab main-border rounded-md shadow-sm transition enabled:hover:scale-[1.03] 
-           enabled:hover:shadow-md enabled:active:scale-[0.97] disabled:brightness-50;
-
-    &:focus-visible {
-      @apply scale-[1.03] shadow-md;
-    }
-  }
-
-  .gradient-title {
-    @apply from-accent-start to-accent-end bg-gradient-to-r bg-clip-text text-transparent;
-  }
-
-  .custom-underline {
-    @apply underline decoration-transparent outline-none transition [text-decoration-thickness:1px] 
-           hover:decoration-inherit focus-visible:decoration-inherit;
-  }
-
-  .animated-underline {
-    background-size: 0 2px;
-    background-position: 0 100%;
-
-    @apply from-accent-start to-accent-end bg-gradient-to-r bg-no-repeat pb-0.5 no-underline 
-           outline-none transition-all duration-300;
-
-    &.with-dots {
-      @apply border-b border-dotted border-black dark:border-white;
-    }
-
-    &:hover,
-    &:focus-visible {
-      background-size: 100% 2px;
-
-      &.with-dots {
-        @apply border-transparent;
-      }
-    }
   }
 }

@@ -1,37 +1,27 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { SiGoogle } from 'react-icons/si';
-import { MdLogout } from 'react-icons/md';
-import { auth, signIn, signOut } from '@/auth';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/lib/hooks/use-user';
 import { Button } from '../ui/button';
+import { HeaderProfile } from './header-profile';
 
-export async function Header(): Promise<JSX.Element> {
-  const session = await auth();
+export function Header(): JSX.Element {
+  const router = useRouter();
 
-  const user = session?.user;
+  const { user } = useUser();
 
-  const handleLogin = async (): Promise<void> => {
-    'use server';
-
-    await signIn('google');
-  };
-
-  const handleLogout = async (): Promise<void> => {
-    'use server';
-
-    await signOut();
-  };
-
-  const formAction = user ? handleLogout : handleLogin;
+  const handleLogin = (): void => router.push('/login');
 
   return (
-    <header className='my-4 flex items-center justify-between shadow-lg'>
+    <header className='layout my-4 flex w-full items-center justify-between shadow-lg'>
       <div className='flex items-center gap-2'>
         <Link href='/'>
           <Image src='/logo.svg' width={48} height={48} alt='Logo' />
         </Link>
         <div>
-          <h1 className='font-bold'>Link</h1>
+          <h1 className='font-bold'>PLN Postpaid Payment</h1>
           <p className='-mt-1 text-sm text-gray-200'>
             at{' '}
             <a
@@ -45,25 +35,17 @@ export async function Header(): Promise<JSX.Element> {
         </div>
       </div>
       <div>
-        <form action={formAction}>
-          {user ? (
-            <Button
-              type='submit'
-              className='flex items-center gap-2 font-semibold'
-            >
-              <MdLogout />
-              Log out, {user.name}
-            </Button>
-          ) : (
-            <Button
-              className='flex items-center gap-2 font-semibold'
-              type='submit'
-            >
-              <SiGoogle />
-              Sign in
-            </Button>
-          )}
-        </form>
+        {user ? (
+          <HeaderProfile />
+        ) : (
+          <Button
+            className='flex items-center gap-2 font-semibold'
+            type='submit'
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+        )}
       </div>
     </header>
   );

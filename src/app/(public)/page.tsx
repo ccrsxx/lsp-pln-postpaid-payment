@@ -1,6 +1,6 @@
 export default function Home(): JSX.Element {
   return (
-    <main>
+    <main className='layout'>
       <h1>Hello World</h1>
     </main>
   );

@@ -26,6 +26,14 @@ export type APIResponse<T = unknown> = {
   data: T;
 };
 
+export type ActionsResponse =
+  | {
+      success: string;
+    }
+  | {
+      error: string;
+    };
+
 export type MutationResult<T = unknown, V = unknown> = UseMutationResult<
   V,
   DefaultError,

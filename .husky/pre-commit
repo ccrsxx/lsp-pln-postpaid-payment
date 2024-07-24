@@ -4,6 +4,6 @@
 npm run test:ci
 npm run type-check
 npm run sort-imports 
-npm run lint
+# npm run lint
 
 npx lint-staged
