@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { toast } from 'sonner';
 import { MoreHorizontal } from 'lucide-react';
 import {
   DropdownMenu,
@@ -8,15 +10,28 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { Button } from '../button';
+import type { ReactNode } from 'react';
 import type { Row } from '@tanstack/react-table';
 
 type DataTableActionProps<TData> = {
   row: Row<TData & { id: string }>;
+  children?: ReactNode;
+  onDelete?: (id: string) => void;
+  slugLinkGenerator: (id: string) => string;
 };
 
 export function DataTableAction<TData>({
-  row
+  row,
+  children,
+  slugLinkGenerator
 }: DataTableActionProps<TData>): JSX.Element {
+  const recordId = row.original.id;
+
+  const handleRecordCopyId = (): void => {
+    toast.success('ID copied to clipboard');
+    void navigator.clipboard.writeText(recordId);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -27,14 +42,19 @@ export function DataTableAction<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(row.original.id)}
-        >
+        <DropdownMenuItem onClick={handleRecordCopyId}>
           Copy ID
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+        <Link href={slugLinkGenerator(recordId)}>
+          <DropdownMenuItem>Edit</DropdownMenuItem>
+        </Link>
+        {children && (
+          <>
+            <DropdownMenuSeparator />
+            {children}
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

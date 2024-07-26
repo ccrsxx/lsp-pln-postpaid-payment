@@ -3,7 +3,6 @@
 import { compare } from 'bcrypt';
 import { signIn } from '@/auth';
 import { prisma } from '@/lib/db';
-import { sleep } from '@/lib/helper';
 import { loginSchema, type LoginSchema } from './schema';
 import type { ActionsResponse } from '@/lib/types/api';
 
@@ -11,8 +10,6 @@ export async function loginUser(
   formData: LoginSchema
 ): Promise<ActionsResponse> {
   const { data, success } = loginSchema.safeParse(formData);
-
-  await sleep(2000);
 
   if (!success) return { error: 'Invalid form data' };
 

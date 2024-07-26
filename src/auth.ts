@@ -1,9 +1,10 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { getUniqueKwhNumber } from '@/app/actions/common';
 import { prisma } from './lib/db';
 import authConfig from './auth.config';
-import { getUniqueKwhNumber } from './lib/helper';
-import type { User } from '@prisma/client';
+import { createNewUser } from './app/actions/auth';
+import type { Role } from '@prisma/client';
 
 declare module 'next-auth' {
   /**
@@ -12,7 +13,8 @@ declare module 'next-auth' {
   interface Session {
     user: {
       /** Additional user fields. */
-      role: User['role'];
+      id: string;
+      role: Role;
       /**
        * By default, TypeScript merges new interface properties and overwrites existing ones.
        * In this case, the default session user properties will be overwritten,
@@ -43,33 +45,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (shouldBackfillRateVariant) {
         const uniqueKwhNumber = await getUniqueKwhNumber();
 
-        await prisma.user.create({
-          data: {
-            name: user.name,
-            email: userEmail,
-            image: user.image,
-            kwhNumber: uniqueKwhNumber,
-            RateVariant: {
-              connect: {
-                name: '900 VA'
-              }
-            }
-          }
+        await createNewUser({
+          name: user?.name ?? '',
+          email: userEmail,
+          password: '',
+          kwhNumber: uniqueKwhNumber
         });
       }
 
       return true;
     },
-    async session({ token, session }): Promise<typeof session> {
-      const userId = token.sub;
+    async session({ session }): Promise<typeof session> {
+      const userEmail = session.user.email;
 
-      const userFromUserId = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { role: true }
+      const userFromEmail = await prisma.user.findUnique({
+        where: { email: userEmail },
+        select: { id: true, role: true, image: true }
       });
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      if (userFromUserId) session.user.role = userFromUserId.role;
+      if (userFromEmail) {
+        session.user.id = userFromEmail.id;
+        session.user.role = userFromEmail.role;
+        session.user.image = userFromEmail.image;
+      }
 
       return session;
     }

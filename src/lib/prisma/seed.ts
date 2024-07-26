@@ -1,12 +1,11 @@
 import { faker } from '@faker-js/faker';
+import { getAllRateVariants, getUniqueKwhNumber } from '@/app/actions/common';
 import { prisma } from '../db.js';
-import { RATE_VARIANT_NAMES, type RateVariantName } from '../types/enum.js';
-import { getUniqueKwhNumber } from '../helper.js';
 import type { User, RateVariant } from '@prisma/client';
 
 async function seedRateVariants(): Promise<void> {
   type RequiredRateVariant = Pick<RateVariant, 'feeRate'> & {
-    name: RateVariantName;
+    name: string;
   };
 
   const rateVariants: RequiredRateVariant[] = [
@@ -41,19 +40,25 @@ async function seedAdminUsers(): Promise<void> {
     }
   ];
 
-  for (const { email, name, password } of users) {
+  for (const { email, name, image, password } of users) {
     await prisma.user.upsert({
       where: { email },
       update: {},
       create: {
         name,
         email,
+        image,
         password,
         role: 'ADMIN',
-        kwhNumber: '1770138133',
-        RateVariant: {
+        kwhNumber: '177013813',
+        rateVariant: {
           connect: {
             name: '2200 VA'
+          }
+        },
+        usage: {
+          create: {
+            initialKwh: 69
           }
         }
       }
@@ -64,10 +69,12 @@ async function seedAdminUsers(): Promise<void> {
 async function seedTestUsers(): Promise<void> {
   type RequiredUser = Pick<User, 'email' | 'name'>;
 
-  const users: RequiredUser[] = Array.from({ length: 500 }, () => ({
+  const users: RequiredUser[] = Array.from({ length: 50 }, () => ({
     name: faker.person.fullName(),
     email: faker.internet.email()
   }));
+
+  const rateVariants = await getAllRateVariants();
 
   for (const { email, name } of users) {
     const uniqueKwhNumber = await getUniqueKwhNumber();
@@ -80,9 +87,14 @@ async function seedTestUsers(): Promise<void> {
         email,
         role: 'USER',
         kwhNumber: uniqueKwhNumber,
-        RateVariant: {
+        rateVariant: {
           connect: {
-            name: faker.helpers.arrayElement(RATE_VARIANT_NAMES)
+            name: faker.helpers.arrayElement(rateVariants)
+          }
+        },
+        usage: {
+          create: {
+            initialKwh: 0
           }
         }
       }

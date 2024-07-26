@@ -1,7 +1,6 @@
 'use client';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { RATE_VARIANT_NAMES, type RateVariantName } from '@/lib/types/enum';
 import {
   Select,
   SelectItem,
@@ -10,7 +9,13 @@ import {
   SelectTrigger
 } from '@/components/ui/select';
 
-export function RateVariantFilter(): JSX.Element {
+type RateVariantFilterProps = {
+  rateVariants: string[];
+};
+
+export function RateVariantFilter({
+  rateVariants
+}: RateVariantFilterProps): JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,9 +33,7 @@ export function RateVariantFilter(): JSX.Element {
 
   const currentRateVariant = searchParams.get('query') ?? '';
 
-  const defaultRateVariant = RATE_VARIANT_NAMES.includes(
-    currentRateVariant as RateVariantName
-  )
+  const defaultRateVariant = rateVariants.includes(currentRateVariant)
     ? currentRateVariant
     : 'All';
 
@@ -41,7 +44,7 @@ export function RateVariantFilter(): JSX.Element {
       </SelectTrigger>
       <SelectContent>
         <SelectItem value='All'>All Rate Variants</SelectItem>
-        {RATE_VARIANT_NAMES.map((name) => (
+        {rateVariants.map((name) => (
           <SelectItem value={name} key={name}>
             {name}
           </SelectItem>

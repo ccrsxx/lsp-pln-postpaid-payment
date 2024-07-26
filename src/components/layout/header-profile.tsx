@@ -30,7 +30,7 @@ export function HeaderProfile(): JSX.Element {
           className='overflow-hidden rounded-full'
         >
           <Image
-            src={image ?? '/placeholder.png'}
+            src={image ?? '/placeholder-user.jpg'}
             width={36}
             height={36}
             alt='Avatar'

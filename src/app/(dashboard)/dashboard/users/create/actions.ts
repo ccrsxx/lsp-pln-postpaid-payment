@@ -1,19 +1,20 @@
 'use server';
 
 import { hash } from 'bcrypt';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { getUniqueKwhNumber } from '@/app/actions/common';
-import { registerSchema, type RegisterSchema } from './schema';
+import { createUserSchema, type CreateUserSchema } from './schema';
 import type { ActionsResponse } from '@/lib/types/api';
 
-export async function registerUser(
-  formData: RegisterSchema
+export async function createUser(
+  formData: CreateUserSchema
 ): Promise<ActionsResponse> {
-  const { data, success } = registerSchema.safeParse(formData);
+  const { data, success } = createUserSchema.safeParse(formData);
 
   if (!success) return { error: 'Invalid form data' };
 
-  const { name, email, password } = data;
+  const { name, email, password, rateVariant } = data;
 
   try {
     const userFromEmailExists = await prisma.user.findFirst({
@@ -34,13 +35,15 @@ export async function registerUser(
         kwhNumber: uniqueKwhNumber,
         rateVariant: {
           connect: {
-            name: '900 VA'
+            name: rateVariant
           }
         }
       }
     });
 
-    return { success: 'Registration successful' };
+    revalidatePath('/dashboard/users');
+
+    return { success: 'Create user successful' };
   } catch (err) {
     if (err instanceof Error) return { error: err.message };
 

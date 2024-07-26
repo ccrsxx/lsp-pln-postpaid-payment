@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'COMPLETED', 'CANCELED');
+CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'COMPLETED');
 
 -- CreateTable
 CREATE TABLE "user" (
@@ -74,10 +74,10 @@ CREATE TABLE "rate_variant" (
 -- CreateTable
 CREATE TABLE "usage" (
     "id" TEXT NOT NULL,
-    "active" BOOLEAN NOT NULL,
-    "final_kwh" INTEGER NOT NULL,
-    "initial_kwh" INTEGER NOT NULL,
-    "user_id" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "final_kwh" DOUBLE PRECISION,
+    "initial_kwh" DOUBLE PRECISION NOT NULL,
+    "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ NOT NULL,
 
@@ -87,7 +87,8 @@ CREATE TABLE "usage" (
 -- CreateTable
 CREATE TABLE "bill" (
     "id" TEXT NOT NULL,
-    "total_kwh" INTEGER NOT NULL,
+    "total_price" DOUBLE PRECISION NOT NULL,
+    "total_usage_kwh" DOUBLE PRECISION NOT NULL,
     "user_id" TEXT NOT NULL,
     "usage_id" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -99,8 +100,6 @@ CREATE TABLE "bill" (
 -- CreateTable
 CREATE TABLE "payment" (
     "id" TEXT NOT NULL,
-    "total" INTEGER NOT NULL,
-    "admin_fee" INTEGER NOT NULL,
     "user_id" TEXT NOT NULL,
     "bill_id" TEXT NOT NULL,
     "status" "PaymentStatus" NOT NULL,
@@ -132,7 +131,7 @@ ALTER TABLE "account" ADD CONSTRAINT "account_user_id_fkey" FOREIGN KEY ("user_i
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "usage" ADD CONSTRAINT "usage_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "usage" ADD CONSTRAINT "usage_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "bill" ADD CONSTRAINT "bill_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

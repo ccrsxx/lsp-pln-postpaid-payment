@@ -104,15 +104,7 @@ export default function Register(): JSX.Element {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <div className='flex items-center'>
-                    <FormLabel>Password</FormLabel>
-                    <Link
-                      href='#'
-                      className='ml-auto inline-block text-sm underline'
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input type='password' disabled={isPending} {...field} />
                   </FormControl>

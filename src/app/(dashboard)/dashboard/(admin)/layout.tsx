@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { Sidebar } from './dashboard/dashboard-sidebar';
-import { DashboardHeader } from './dashboard/dashboard-header';
+import { Sidebar } from '../dashboard-sidebar';
+import { DashboardHeader } from '../dashboard-header';
 import type { ReactNode } from 'react';
 
 export default async function Layout({
@@ -12,7 +12,9 @@ export default async function Layout({
 }): Promise<JSX.Element> {
   const session = await auth();
 
-  if (!session) redirect('/login');
+  const isAdmin = session?.user.role === 'ADMIN';
+
+  if (!isAdmin) redirect('/login');
 
   return (
     <TooltipProvider>

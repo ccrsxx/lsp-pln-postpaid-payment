@@ -19,11 +19,11 @@ model User {
 
   rateVariantId String @map("rate_variant_id")
 
-  RateVariant RateVariant @relation(fields: [rateVariantId], references: [id])
+  rateVariant RateVariant @relation(fields: [rateVariantId], references: [id])
 
-  Bill     Bill[]
-  Usage    Usage[]
-  Payment  Payment[]
+  bill     Bill[]
+  usage    Usage[]
+  payment  Payment[]
   accounts Account[]
   sessions Session[]
 
@@ -97,13 +97,13 @@ model RateVariant {
 
 model Usage {
   id         String  @id @default(uuid())
-  active     Boolean
-  finalKwh   Int     @map("final_kwh")
-  initialKwh Int     @map("initial_kwh")
+  active     Boolean @default(true)
+  finalKwh   Float?  @map("final_kwh")
+  initialKwh Float   @map("initial_kwh")
 
-  userId String? @map("user_id")
+  userId String @map("user_id")
 
-  user User? @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   bill Bill[]
 
@@ -114,8 +114,9 @@ model Usage {
 }
 
 model Bill {
-  id       String @id @default(uuid())
-  totalKwh Int    @map("total_kwh")
+  id            String @id @default(uuid())
+  totalPrice    Float  @map("total_price")
+  totalUsageKwh Float  @map("total_usage_kwh")
 
   userId  String @map("user_id")
   usageId String @map("usage_id")
@@ -132,9 +133,7 @@ model Bill {
 }
 
 model Payment {
-  id       String @id @default(uuid())
-  total    Int
-  adminFee Int    @map("admin_fee")
+  id String @id @default(uuid())
 
   userId String @map("user_id")
   billId String @map("bill_id")
@@ -158,5 +157,5 @@ enum Role {
 enum PaymentStatus {
   PENDING
   COMPLETED
-  CANCELED
+  CANCELLED
 }

@@ -4,7 +4,6 @@ import { Inter as FontSans } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
 import { Toaster } from '@/components/ui/sonner';
-
 import type { Metadata } from 'next';
 
 const inter = FontSans({ subsets: ['latin'], variable: '--font-sans' });

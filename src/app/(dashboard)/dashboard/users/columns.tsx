@@ -1,22 +1,34 @@
 'use client';
 
+import { Prisma } from '@prisma/client';
+import { useModal } from '@/lib/hooks/use-modal';
+import { formatDate } from '@/lib/format';
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-header';
 import { DataTableAction } from '@/components/ui/table/data-table-action';
 import {
   DataTableCheckbox,
   DataTableCheckboxHeader
 } from '@/components/ui/table/data-table-checkbox';
-import type { User } from '@prisma/client';
+import { CreateBillDialog } from './bills/create-bill-dialog';
 import type { ColumnDef } from '@tanstack/react-table';
 
-export type Customer = Pick<
-  User,
-  'id' | 'name' | 'email' | 'createdAt' | 'kwhNumber'
-> & {
-  RateVariant: { name: string };
-};
+const userWithRateVariant = Prisma.validator<Prisma.UserDefaultArgs>()({
+  include: {
+    rateVariant: true,
+    usage: {
+      where: {
+        active: true
+      }
+    }
+  }
+});
 
-export const columns: ColumnDef<Customer>[] = [
+export type UserWithRateVariantAndUsage = Prisma.UserGetPayload<
+  typeof userWithRateVariant
+>;
+
+export const columns: ColumnDef<UserWithRateVariantAndUsage>[] = [
   {
     id: 'select',
     enableHiding: false,
@@ -44,7 +56,7 @@ export const columns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: 'rateVariant',
-    accessorFn: ({ RateVariant: { name } }) => name,
+    accessorFn: ({ rateVariant: { name } }) => name,
     header: ({ column }): JSX.Element => {
       return <DataTableColumnHeader title='Rate Variant' column={column} />;
     },
@@ -57,12 +69,38 @@ export const columns: ColumnDef<Customer>[] = [
     header: ({ column }): JSX.Element => {
       return <DataTableColumnHeader title='Created At' column={column} />;
     },
-    cell: ({ row }) => new Date(row.getValue('createdAt')).toLocaleDateString()
+    cell: ({
+      row: {
+        original: { createdAt }
+      }
+    }) => formatDate(createdAt)
   },
   {
     id: 'actions',
     cell: ({ row }): JSX.Element => {
-      return <DataTableAction row={row} />;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { open, openModal, closeModal } = useModal();
+
+      return (
+        <>
+          <CreateBillDialog
+            user={row.original}
+            open={open}
+            closeModal={closeModal}
+          />
+          <DataTableAction
+            row={row}
+            slugLinkGenerator={(id: string) => `/dashboard/users/${id}/update`}
+          >
+            <DropdownMenuItem
+              onClick={openModal}
+              disabled={!row.original.usage.length}
+            >
+              Create Bill
+            </DropdownMenuItem>
+          </DataTableAction>
+        </>
+      );
     }
   }
 ];

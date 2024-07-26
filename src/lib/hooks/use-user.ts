@@ -1,8 +1,11 @@
 import { useSession } from 'next-auth/react';
 import type { User } from 'next-auth';
+import type { Role } from '@prisma/client';
+
+type UserWithRole = User & { role: Role };
 
 type UseUser = {
-  user: User | null;
+  user: UserWithRole | null;
 };
 
 export function useUser(): UseUser {
