@@ -11,7 +11,7 @@ export default async function Layout({
 
   const isAdmin = session?.user.role === 'ADMIN';
 
-  if (!isAdmin) redirect('/dashboard/bills');
+  if (!isAdmin) redirect('/dashboard');
 
   return <>{children}</>;
 }

@@ -6,7 +6,7 @@ export const createPaymentSchema = z.object({
     .number()
     .int()
     .min(100_000)
-    .max(999_9999)
+    .max(999_999_999)
     .transform(String)
 });
 

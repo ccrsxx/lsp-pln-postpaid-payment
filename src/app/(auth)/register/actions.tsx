@@ -3,8 +3,8 @@
 import { hash } from 'bcrypt';
 import { prisma } from '@/lib/db';
 import { getUniqueKwhNumber } from '@/lib/actions/common';
-import { registerSchema, type RegisterSchema } from './schema';
 import { createNewUser } from '@/lib/actions/auth';
+import { registerSchema, type RegisterSchema } from './schema';
 import type { ActionsResponse } from '@/lib/types/api';
 
 export async function registerUser(

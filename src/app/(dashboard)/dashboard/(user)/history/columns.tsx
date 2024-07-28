@@ -1,13 +1,9 @@
 'use client';
 
 import { Prisma } from '@prisma/client';
-import { useModal } from '@/lib/hooks/use-modal';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-header';
-import { DataTableAction } from '@/components/ui/table/data-table-action';
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { PaymentStatusChip } from '../payment-status-chip';
-import { ValidatePaymentDialog } from './validate-payment-dialog';
+import { PaymentStatusChip } from '../../payment-status-chip';
 import type { ColumnDef } from '@tanstack/react-table';
 
 const paymentWithUser = Prisma.validator<Prisma.PaymentDefaultArgs>()({
@@ -36,17 +32,26 @@ export const columns: ColumnDef<PaymentWithUserAndBill>[] = [
     }) => name
   },
   {
-    accessorKey: 'user',
+    accessorKey: 'accountName',
     header: ({ column }): JSX.Element => {
-      return <DataTableColumnHeader title='Email' column={column} />;
+      return <DataTableColumnHeader title='Account Name' column={column} />;
     },
     cell: ({
       row: {
-        original: {
-          user: { email }
-        }
+        original: { accountName }
       }
-    }) => email
+    }) => accountName
+  },
+  {
+    accessorKey: 'accountNumber',
+    header: ({ column }): JSX.Element => {
+      return <DataTableColumnHeader title='Account Number' column={column} />;
+    },
+    cell: ({
+      row: {
+        original: { accountNumber }
+      }
+    }) => accountNumber
   },
   {
     accessorKey: 'totalUsageKwh',
@@ -97,27 +102,5 @@ export const columns: ColumnDef<PaymentWithUserAndBill>[] = [
         original: { createdAt }
       }
     }) => formatDate(createdAt)
-  },
-  {
-    id: 'actions',
-    cell: ({ row }): JSX.Element => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { open, openModal, closeModal } = useModal();
-
-      return (
-        <>
-          <ValidatePaymentDialog
-            open={open}
-            payment={row.original}
-            closeModal={closeModal}
-          />
-          <DataTableAction row={row} disableActions>
-            <DropdownMenuItem onClick={openModal}>
-              Validate payment
-            </DropdownMenuItem>
-          </DataTableAction>
-        </>
-      );
-    }
   }
 ];

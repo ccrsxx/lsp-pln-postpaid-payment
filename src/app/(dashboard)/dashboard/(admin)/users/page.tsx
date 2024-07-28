@@ -10,7 +10,7 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/table/data-table';
-import { DashboardBreadcrumb } from '../../../../components/dashboard/dashboard-breadcrumb';
+import { DashboardBreadcrumb } from '@/components/dashboard/dashboard-breadcrumb';
 import { RateVariantFilter } from './rate-variant-filter';
 import { columns } from './columns';
 
@@ -38,6 +38,9 @@ export default async function Users({
           }
         }
       })
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 

@@ -35,26 +35,17 @@ export async function createBill(
 
   const currentBill = await prisma.bill.findFirst({
     where: {
-      userId: user.id
+      userId: user.id,
+      expiredAt: {
+        gt: new Date()
+      }
     },
     orderBy: {
       createdAt: 'desc'
     }
   });
 
-  if (currentBill) {
-    const nextMonthAfterCurrentBill = new Date(currentBill.createdAt);
-
-    nextMonthAfterCurrentBill.setMonth(
-      nextMonthAfterCurrentBill.getMonth() + 1
-    );
-
-    const currentBillDate = new Date();
-
-    if (nextMonthAfterCurrentBill > currentBillDate) {
-      return { error: 'Bill already created for this month' };
-    }
-  }
+  if (currentBill) return { error: 'Bill already created for this month' };
 
   const currentUsage = user.usage[0];
 
@@ -63,6 +54,10 @@ export async function createBill(
 
   const totalUsageKwh = finalKwh - initialKwh;
   const totalPrice = totalUsageKwh * user.rateVariant.feeRate;
+
+  const nextMonthDate = new Date();
+
+  nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
 
   await prisma.$transaction([
     prisma.usage.update({
@@ -79,7 +74,8 @@ export async function createBill(
         totalPrice,
         totalUsageKwh,
         userId: user.id,
-        usageId: currentUsage.id
+        usageId: currentUsage.id,
+        expiredAt: nextMonthDate
       }
     }),
     prisma.usage.create({

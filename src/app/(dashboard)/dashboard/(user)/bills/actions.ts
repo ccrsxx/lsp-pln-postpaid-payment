@@ -19,7 +19,10 @@ export async function createPayment(
 
   const paymentAlreadyExist = await prisma.payment.findFirst({
     where: {
-      billId
+      billId,
+      status: {
+        not: 'REJECTED'
+      }
     }
   });
 

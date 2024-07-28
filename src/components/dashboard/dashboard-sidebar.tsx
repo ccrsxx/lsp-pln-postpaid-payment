@@ -1,7 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { Package2, Settings, ShoppingCart, Users2 } from 'lucide-react';
+import {
+  Users2,
+  History,
+  Package2,
+  Settings,
+  ShoppingCart
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/lib/hooks/use-user';
@@ -22,12 +28,6 @@ type SidebarItem = {
 
 const sidebarItems: SidebarItem[] = [
   {
-    href: '/dashboard/bills',
-    Icon: Package2,
-    role: 'ADMIN',
-    label: 'Bills'
-  },
-  {
     href: '/dashboard/users',
     Icon: Users2,
     role: 'ADMIN',
@@ -38,6 +38,18 @@ const sidebarItems: SidebarItem[] = [
     Icon: ShoppingCart,
     role: 'ADMIN',
     label: 'Payments'
+  },
+  {
+    href: '/dashboard/bills',
+    Icon: Package2,
+    role: 'USER',
+    label: 'Bills'
+  },
+  {
+    href: '/dashboard/history',
+    Icon: History,
+    role: 'USER',
+    label: 'History'
   }
 ];
 

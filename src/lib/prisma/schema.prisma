@@ -114,9 +114,10 @@ model Usage {
 }
 
 model Bill {
-  id            String @id @default(uuid())
-  totalPrice    Float  @map("total_price")
-  totalUsageKwh Float  @map("total_usage_kwh")
+  id            String   @id @default(uuid())
+  expiredAt     DateTime @map("expired_at")
+  totalPrice    Float    @map("total_price")
+  totalUsageKwh Float    @map("total_usage_kwh")
 
   userId  String @map("user_id")
   usageId String @map("usage_id")

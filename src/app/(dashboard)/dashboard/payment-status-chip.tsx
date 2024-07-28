@@ -1,16 +1,16 @@
 import { cn } from '@/lib/utils';
 import type { PaymentStatus } from '@prisma/client';
 
-type CustomStatus = 'UNPAID' | PaymentStatus;
+export type CustomPaymentStatus = 'UNPAID' | 'EXPIRED' | PaymentStatus;
 
 type PaymentStatusChipProps = {
-  status: PaymentStatus | null;
+  status: CustomPaymentStatus | null;
 };
 
 export function PaymentStatusChip({
   status
 }: PaymentStatusChipProps): JSX.Element {
-  const paymentStatus: CustomStatus = status ?? 'UNPAID';
+  const paymentStatus: CustomPaymentStatus = status ?? 'UNPAID';
 
   return (
     <div
@@ -18,7 +18,8 @@ export function PaymentStatusChip({
         'bg-accent': paymentStatus === 'UNPAID',
         'bg-red-500': paymentStatus === 'REJECTED',
         'bg-blue-500': paymentStatus === 'PENDING',
-        'bg-green-500': paymentStatus === 'COMPLETED'
+        'bg-green-500': paymentStatus === 'COMPLETED',
+        'bg-yellow-500': paymentStatus === 'EXPIRED'
       })}
     >
       {paymentStatus}

@@ -1,4 +1,3 @@
-import { getAllRateVariants } from '@/lib/actions/common';
 import {
   Card,
   CardTitle,
@@ -7,8 +6,7 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/table/data-table';
-import { DashboardBreadcrumb } from '../../../../components/dashboard/dashboard-breadcrumb';
-import { RateVariantFilter } from '../users/rate-variant-filter';
+import { DashboardBreadcrumb } from '@/components/dashboard/dashboard-breadcrumb';
 import { columns } from './columns';
 
 export default async function Bills(): Promise<JSX.Element> {
@@ -16,10 +14,11 @@ export default async function Bills(): Promise<JSX.Element> {
     include: {
       user: true,
       bill: true
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
-
-  const rateVariants = await getAllRateVariants();
 
   return (
     <main className='grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8'>
@@ -35,9 +34,7 @@ export default async function Bills(): Promise<JSX.Element> {
           <CardDescription>A list of all payments.</CardDescription>
         </CardHeader>
         <CardContent>
-          <DataTable data={bills} columns={columns}>
-            <RateVariantFilter rateVariants={rateVariants} />
-          </DataTable>
+          <DataTable data={bills} columns={columns} />
         </CardContent>
       </Card>
     </main>
