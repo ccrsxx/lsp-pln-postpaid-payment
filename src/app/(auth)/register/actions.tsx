@@ -2,8 +2,9 @@
 
 import { hash } from 'bcrypt';
 import { prisma } from '@/lib/db';
-import { getUniqueKwhNumber } from '@/app/actions/common';
+import { getUniqueKwhNumber } from '@/lib/actions/common';
 import { registerSchema, type RegisterSchema } from './schema';
+import { createNewUser } from '@/lib/actions/auth';
 import type { ActionsResponse } from '@/lib/types/api';
 
 export async function registerUser(
@@ -26,18 +27,11 @@ export async function registerUser(
 
     const uniqueKwhNumber = await getUniqueKwhNumber();
 
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        kwhNumber: uniqueKwhNumber,
-        rateVariant: {
-          connect: {
-            name: '900 VA'
-          }
-        }
-      }
+    await createNewUser({
+      name,
+      email,
+      password: hashedPassword,
+      kwhNumber: uniqueKwhNumber
     });
 
     return { success: 'Registration successful' };

@@ -1,9 +1,9 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { getUniqueKwhNumber } from '@/app/actions/common';
+import { getUniqueKwhNumber } from '@/lib/actions/common';
 import { prisma } from './lib/db';
 import authConfig from './auth.config';
-import { createNewUser } from './app/actions/auth';
+import { createNewUser } from './lib/actions/auth';
 import type { Role } from '@prisma/client';
 
 declare module 'next-auth' {

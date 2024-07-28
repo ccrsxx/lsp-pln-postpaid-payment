@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { toast } from 'sonner';
 import { MoreHorizontal } from 'lucide-react';
 import {
@@ -16,14 +15,17 @@ import type { Row } from '@tanstack/react-table';
 type DataTableActionProps<TData> = {
   row: Row<TData & { id: string }>;
   children?: ReactNode;
-  onDelete?: (id: string) => void;
-  slugLinkGenerator: (id: string) => string;
+  disableActions?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export function DataTableAction<TData>({
   row,
   children,
-  slugLinkGenerator
+  disableActions,
+  onEdit,
+  onDelete
 }: DataTableActionProps<TData>): JSX.Element {
   const recordId = row.original.id;
 
@@ -45,10 +47,13 @@ export function DataTableAction<TData>({
         <DropdownMenuItem onClick={handleRecordCopyId}>
           Copy ID
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <Link href={slugLinkGenerator(recordId)}>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-        </Link>
+        {!disableActions && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={onDelete}>Delete</DropdownMenuItem>
+          </>
+        )}
         {children && (
           <>
             <DropdownMenuSeparator />

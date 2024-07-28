@@ -23,8 +23,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
-  createBillActionsSchema,
   createBillSchema,
+  createBillActionsSchema,
   type CreateBillSchema
 } from './schema';
 import { createBill } from './actions';
@@ -41,11 +41,9 @@ export function CreateBillDialog({
   user,
   closeModal
 }: CreateBillDialogProps): JSX.Element {
-  const {
-    id,
-    name,
-    usage: [{ createdAt, initialKwh }]
-  } = user;
+  const { id, name, usage } = user;
+
+  const { initialKwh, createdAt } = usage?.[0] ?? {};
 
   const [isPending, startTransition] = useTransition();
 
@@ -115,7 +113,8 @@ export function CreateBillDialog({
                   <FormLabel>Final kWh</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Final'
+                      type='number'
+                      placeholder='100 kWh'
                       disabled={isPending}
                       {...field}
                     />

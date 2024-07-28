@@ -83,6 +83,7 @@
     ],
     "import/no-duplicates": ["warn", { "prefer-inline": true }],
     "@next/next/no-img-element": "off",
+    "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/consistent-type-exports": "warn",
     "@typescript-eslint/consistent-type-imports": "warn",
     "@typescript-eslint/prefer-nullish-coalescing": "warn",

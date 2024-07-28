@@ -23,7 +23,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { createPayment } from './actions';
-import { createPaymentSchema, type CreatePaymentSchema } from './schema';
+import {
+  createPaymentSchema,
+  createPaymentActionsSchema,
+  type CreatePaymentSchema
+} from './schema';
 import type { BillWithPayment } from './columns';
 
 type CreateBillDialogProps = {
@@ -37,13 +41,30 @@ export function CreatePaymentDialog({
   bill,
   closeModal
 }: CreateBillDialogProps): JSX.Element {
+  const { id: billId, userId } = bill;
+
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<CreatePaymentSchema>({
     resolver: zodResolver(createPaymentSchema)
   });
 
-  const onSubmit = (data: CreatePaymentSchema): void => {
+  const onSubmit = ({
+    accountName,
+    accountNumber
+  }: CreatePaymentSchema): void => {
+    const { data, success } = createPaymentActionsSchema.safeParse({
+      userId: userId,
+      billId: billId,
+      accountName,
+      accountNumber
+    });
+
+    if (!success) {
+      toast.error('Invalid form data');
+      return;
+    }
+
     startTransition(() => {
       toast.promise(createPayment(data), {
         loading: 'Creating...',
@@ -76,6 +97,9 @@ export function CreatePaymentDialog({
             Total Usage {bill.totalUsageKwh} kWh with price of{' '}
             {formatCurrency(bill.totalPrice)}
           </AlertDescription>
+          <AlertDescription>
+            Send to Virtual Account BCA at 177013859
+          </AlertDescription>
         </Alert>
         <Form {...form}>
           <form className='grid gap-4' onSubmit={form.handleSubmit(onSubmit)}>
@@ -100,6 +124,7 @@ export function CreatePaymentDialog({
                   <FormLabel>Account number</FormLabel>
                   <FormControl>
                     <Input
+                      type='number'
                       placeholder='177013'
                       disabled={isPending}
                       {...field}

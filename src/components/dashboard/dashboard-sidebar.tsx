@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, Package2, Settings, ShoppingCart, Users2 } from 'lucide-react';
+import { Package2, Settings, ShoppingCart, Users2 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/lib/hooks/use-user';
@@ -16,17 +16,11 @@ import type { Role } from '@prisma/client';
 type SidebarItem = {
   href: string;
   role: Role;
-  Icon: typeof Home;
+  Icon: typeof Settings;
   label: string;
 };
 
 const sidebarItems: SidebarItem[] = [
-  {
-    href: '/dashboard',
-    Icon: Home,
-    role: 'ADMIN',
-    label: 'Dashboard'
-  },
   {
     href: '/dashboard/bills',
     Icon: Package2,
@@ -49,8 +43,6 @@ const sidebarItems: SidebarItem[] = [
 
 export function Sidebar(): JSX.Element {
   const { user } = useUser();
-
-  console.log({ user });
 
   const pathname = usePathname();
 

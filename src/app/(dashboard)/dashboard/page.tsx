@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription
 } from '@/components/ui/card';
-import { DashboardBreadcrumb } from './dashboard-breadcrumb';
+import { DashboardBreadcrumb } from '../../../components/dashboard/dashboard-breadcrumb';
 
 export default function Users(): JSX.Element {
   return (

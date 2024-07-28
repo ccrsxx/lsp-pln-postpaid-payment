@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { Sidebar } from './dashboard/dashboard-sidebar';
-import { DashboardHeader } from './dashboard/dashboard-header';
+import { Sidebar } from '../../components/dashboard/dashboard-sidebar';
+import { DashboardHeader } from '../../components/dashboard/dashboard-header';
 import type { ReactNode } from 'react';
 
 export default async function Layout({

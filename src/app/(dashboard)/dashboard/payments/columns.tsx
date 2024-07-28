@@ -7,18 +7,47 @@ import { DataTableColumnHeader } from '@/components/ui/table/data-table-header';
 import { DataTableAction } from '@/components/ui/table/data-table-action';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { PaymentStatusChip } from '../payment-status-chip';
-import { CreatePaymentDialog } from './create-payment-dialog';
+import { ValidatePaymentDialog } from './validate-payment-dialog';
 import type { ColumnDef } from '@tanstack/react-table';
 
-const billWithPayment = Prisma.validator<Prisma.BillDefaultArgs>()({
+const paymentWithUser = Prisma.validator<Prisma.PaymentDefaultArgs>()({
   include: {
-    payment: true
+    user: true,
+    bill: true
   }
 });
 
-export type BillWithPayment = Prisma.BillGetPayload<typeof billWithPayment>;
+export type PaymentWithUserAndBill = Prisma.PaymentGetPayload<
+  typeof paymentWithUser
+>;
 
-export const columns: ColumnDef<BillWithPayment>[] = [
+export const columns: ColumnDef<PaymentWithUserAndBill>[] = [
+  {
+    accessorKey: 'user',
+    header: ({ column }): JSX.Element => {
+      return <DataTableColumnHeader title='Name' column={column} />;
+    },
+    cell: ({
+      row: {
+        original: {
+          user: { name }
+        }
+      }
+    }) => name
+  },
+  {
+    accessorKey: 'user',
+    header: ({ column }): JSX.Element => {
+      return <DataTableColumnHeader title='Email' column={column} />;
+    },
+    cell: ({
+      row: {
+        original: {
+          user: { email }
+        }
+      }
+    }) => email
+  },
   {
     accessorKey: 'totalUsageKwh',
     header: ({ column }): JSX.Element => {
@@ -26,7 +55,9 @@ export const columns: ColumnDef<BillWithPayment>[] = [
     },
     cell: ({
       row: {
-        original: { totalUsageKwh }
+        original: {
+          bill: { totalUsageKwh }
+        }
       }
     }) => `${totalUsageKwh} kWh`
   },
@@ -37,7 +68,9 @@ export const columns: ColumnDef<BillWithPayment>[] = [
     },
     cell: ({
       row: {
-        original: { totalPrice }
+        original: {
+          bill: { totalPrice }
+        }
       }
     }) => formatCurrency(totalPrice)
   },
@@ -48,12 +81,10 @@ export const columns: ColumnDef<BillWithPayment>[] = [
     },
     cell: ({
       row: {
-        original: { payment }
+        original: { status }
       }
     }): JSX.Element => {
-      const parsedStatus = payment?.[0]?.status;
-
-      return <PaymentStatusChip status={parsedStatus} />;
+      return <PaymentStatusChip status={status} />;
     }
   },
   {
@@ -73,20 +104,16 @@ export const columns: ColumnDef<BillWithPayment>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { open, openModal, closeModal } = useModal();
 
-      const canCreatePayment = [undefined, 'CANCELLED'].includes(
-        row.original.payment?.[0]?.status
-      );
-
       return (
         <>
-          <CreatePaymentDialog
+          <ValidatePaymentDialog
             open={open}
-            bill={row.original}
+            payment={row.original}
             closeModal={closeModal}
           />
           <DataTableAction row={row} disableActions>
-            <DropdownMenuItem onClick={openModal} disabled={!canCreatePayment}>
-              Create payment
+            <DropdownMenuItem onClick={openModal}>
+              Validate payment
             </DropdownMenuItem>
           </DataTableAction>
         </>

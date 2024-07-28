@@ -1,5 +1,5 @@
-import { DashboardBreadcrumb } from '@/app/(dashboard)/dashboard/dashboard-breadcrumb';
-import { getAllRateVariants } from '@/app/actions/common';
+import { getAllRateVariants } from '@/lib/actions/common';
+import { DashboardBreadcrumb } from '@/components/dashboard/dashboard-breadcrumb';
 import {
   Card,
   CardTitle,

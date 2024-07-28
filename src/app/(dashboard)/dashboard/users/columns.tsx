@@ -1,15 +1,16 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 'use client';
 
+import { toast } from 'sonner';
 import { Prisma } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 import { useModal } from '@/lib/hooks/use-modal';
 import { formatDate } from '@/lib/format';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-header';
 import { DataTableAction } from '@/components/ui/table/data-table-action';
-import {
-  DataTableCheckbox,
-  DataTableCheckboxHeader
-} from '@/components/ui/table/data-table-checkbox';
+import { ActionDialog } from '@/components/dialog/action-dialog';
+import { deleteUser } from './actions';
 import { CreateBillDialog } from './bills/create-bill-dialog';
 import type { ColumnDef } from '@tanstack/react-table';
 
@@ -29,13 +30,6 @@ export type UserWithRateVariantAndUsage = Prisma.UserGetPayload<
 >;
 
 export const columns: ColumnDef<UserWithRateVariantAndUsage>[] = [
-  {
-    id: 'select',
-    enableHiding: false,
-    enableSorting: false,
-    cell: ({ row }) => <DataTableCheckbox row={row} />,
-    header: ({ table }) => <DataTableCheckboxHeader table={table} />
-  },
   {
     accessorKey: 'kwhNumber',
     header: ({ column }): JSX.Element => {
@@ -78,22 +72,61 @@ export const columns: ColumnDef<UserWithRateVariantAndUsage>[] = [
   {
     id: 'actions',
     cell: ({ row }): JSX.Element => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { open, openModal, closeModal } = useModal();
+      const router = useRouter();
+
+      const {
+        open: createUserDialogOpen,
+        openModal: openCreateUserDialog,
+        closeModal: closeCreateUserDialog
+      } = useModal();
+
+      const {
+        open: actionDialogOpen,
+        openModal: openActionDialog,
+        closeModal: closeActionDialog
+      } = useModal();
+
+      const handleDelete = (): void => {
+        toast.promise(deleteUser(row.original.id), {
+          loading: 'Deleting...',
+          success: (res) => {
+            closeActionDialog();
+
+            if ('error' in res) throw new Error(res.error);
+
+            return res.success;
+          },
+          error: (err) => {
+            if (err instanceof Error) return err.message;
+
+            return 'An error occurred';
+          }
+        });
+      };
+
+      const handleEdit = (): void => {
+        router.push(`/dashboard/users/${row.original.id}/update`);
+      };
 
       return (
         <>
           <CreateBillDialog
             user={row.original}
-            open={open}
-            closeModal={closeModal}
+            open={createUserDialogOpen}
+            closeModal={closeCreateUserDialog}
+          />
+          <ActionDialog
+            open={actionDialogOpen}
+            action={handleDelete}
+            closeModal={closeActionDialog}
           />
           <DataTableAction
             row={row}
-            slugLinkGenerator={(id: string) => `/dashboard/users/${id}/update`}
+            onEdit={handleEdit}
+            onDelete={openActionDialog}
           >
             <DropdownMenuItem
-              onClick={openModal}
+              onClick={openCreateUserDialog}
               disabled={!row.original.usage.length}
             >
               Create Bill

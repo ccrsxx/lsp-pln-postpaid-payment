@@ -3,7 +3,7 @@
 import { hash } from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
-import { getUniqueKwhNumber } from '@/app/actions/common';
+import { getUniqueKwhNumber } from '@/lib/actions/common';
 import { createUserSchema, type CreateUserSchema } from './schema';
 import type { ActionsResponse } from '@/lib/types/api';
 

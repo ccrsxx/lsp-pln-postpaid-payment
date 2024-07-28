@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { getAllRateVariants, getUniqueKwhNumber } from '@/app/actions/common';
+import {
+  getAllRateVariants,
+  getUniqueKwhNumber
+} from '@/lib/actions/common.js';
 import { prisma } from '../db.js';
 import type { User, RateVariant } from '@prisma/client';
 

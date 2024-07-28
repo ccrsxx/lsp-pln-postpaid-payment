@@ -1,6 +1,6 @@
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
-import { getAllRateVariants } from '@/app/actions/common';
+import { getAllRateVariants } from '@/lib/actions/common';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,7 +10,7 @@ import {
   CardDescription
 } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/table/data-table';
-import { DashboardBreadcrumb } from '../dashboard-breadcrumb';
+import { DashboardBreadcrumb } from '../../../../components/dashboard/dashboard-breadcrumb';
 import { RateVariantFilter } from './rate-variant-filter';
 import { columns } from './columns';
 
