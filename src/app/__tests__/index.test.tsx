@@ -12,11 +12,11 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 describe('Home', () => {
-  it.skip('renders a heading', () => {
+  it('renders a heading', () => {
     render(<Home />);
 
     const heading = screen.getByRole('heading', {
-      name: /risalamin.com/i
+      name: /welcome/i
     });
 
     expect(heading).toBeInTheDocument();
