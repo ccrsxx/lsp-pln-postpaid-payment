@@ -1,6 +1,10 @@
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import type { PropsWithChildren, Dispatch, SetStateAction } from 'react';
+import {
+  useState,
+  type Dispatch,
+  type SetStateAction,
+  type PropsWithChildren
+} from 'react';
 
 export type Tab = PropsWithChildren<{
   id: string;
