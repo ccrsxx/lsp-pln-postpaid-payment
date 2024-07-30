@@ -31,29 +31,43 @@ async function seedRateVariants(): Promise<void> {
 }
 
 async function seedAdminUsers(): Promise<void> {
-  type RequiredUser = Pick<User, 'name' | 'email' | 'image' | 'password'>;
+  type RequiredUser = Pick<
+    User,
+    'name' | 'role' | 'email' | 'image' | 'password' | 'kwhNumber'
+  >;
 
   const users: RequiredUser[] = [
     {
       name: 'Risal Amin',
       email: 'aminrisal@gmail.com',
+      role: 'ADMIN',
       image:
         'https://raw.githubusercontent.com/ccrsxx/portofolio/main/public/assets/emilia.png',
-      password: '$2b$10$8XxvHtP2mJ0muJhjtvKuD.a4jp4a9RMpJevp5ORgOGZPM3732bvz6'
+      password: '$2b$10$8XxvHtP2mJ0muJhjtvKuD.a4jp4a9RMpJevp5ORgOGZPM3732bvz6',
+      kwhNumber: '177013813'
+    },
+    {
+      name: 'Test',
+      email: 'test@gmail.com',
+      role: 'USER',
+      image:
+        'https://jurnalotaku.id/wp-content/uploads/2016/06/JOI-waifu-wednesday-emilia-7.jpg',
+      password: '$2b$10$8Fn.kZ1bZ6GHEoOuM9bGoeIJBdPh9wbl2CEQp.sMsQTgNESRotdta',
+      kwhNumber: '177013814'
     }
   ];
 
-  for (const { email, name, image, password } of users) {
+  for (const { email, name, kwhNumber, role, image, password } of users) {
     await prisma.user.upsert({
       where: { email },
       update: {},
       create: {
+        role,
         name,
         email,
         image,
         password,
-        role: 'ADMIN',
-        kwhNumber: '177013813',
+        kwhNumber,
         rateVariant: {
           connect: {
             name: '2200 VA'

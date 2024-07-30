@@ -4,6 +4,7 @@ import { hash } from 'bcrypt';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/db';
 import { getUniqueKwhNumber } from '@/lib/actions/common';
+import { createNewUser } from '@/lib/actions/auth';
 import { createUserSchema, type CreateUserSchema } from './schema';
 import type { ActionsResponse } from '@/lib/types/api';
 
@@ -27,18 +28,12 @@ export async function createUser(
 
     const uniqueKwhNumber = await getUniqueKwhNumber();
 
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        kwhNumber: uniqueKwhNumber,
-        rateVariant: {
-          connect: {
-            name: rateVariant
-          }
-        }
-      }
+    await createNewUser({
+      name,
+      email,
+      password: hashedPassword,
+      kwhNumber: uniqueKwhNumber,
+      rateVariant
     });
 
     revalidatePath('/dashboard/users');

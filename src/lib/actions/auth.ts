@@ -3,7 +3,9 @@ import type { User } from '@prisma/client';
 type UserWithRateVariant = Pick<
   User,
   'name' | 'email' | 'password' | 'kwhNumber'
->;
+> & {
+  rateVariant?: string;
+};
 
 export async function createNewUser(props: UserWithRateVariant): Promise<User> {
   return await prisma.user.create({
@@ -13,7 +15,7 @@ export async function createNewUser(props: UserWithRateVariant): Promise<User> {
       password: props.password,
       kwhNumber: props.kwhNumber,
       rateVariant: {
-        connect: { name: '900 VA' }
+        connect: { name: props.rateVariant ?? '900 VA' }
       },
       usage: {
         create: {
