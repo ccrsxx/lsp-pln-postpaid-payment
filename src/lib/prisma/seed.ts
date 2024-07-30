@@ -74,7 +74,7 @@ async function seedAdminUsers(): Promise<void> {
         },
         usage: {
           create: {
-            initialKwh: 69
+            initialKwh: 0
           }
         }
       }
