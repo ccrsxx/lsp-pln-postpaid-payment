@@ -50,8 +50,7 @@ async function seedAdminUsers(): Promise<void> {
       name: 'Test',
       email: 'test@gmail.com',
       role: 'USER',
-      image:
-        'https://jurnalotaku.id/wp-content/uploads/2016/06/JOI-waifu-wednesday-emilia-7.jpg',
+      image: null,
       password: '$2b$10$8Fn.kZ1bZ6GHEoOuM9bGoeIJBdPh9wbl2CEQp.sMsQTgNESRotdta',
       kwhNumber: '177013814'
     }
