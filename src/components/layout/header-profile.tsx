@@ -45,7 +45,6 @@ export function HeaderProfile(): JSX.Element {
         <Link href='/dashboard'>
           <DropdownMenuItem>Dashboard</DropdownMenuItem>
         </Link>
-        <DropdownMenuItem>Settings</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
